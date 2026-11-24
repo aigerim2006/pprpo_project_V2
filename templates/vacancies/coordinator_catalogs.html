@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Справочники системы" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-4">{% trans "Управление справочниками (FR-3.2)" %}</h1>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-3">{% trans "Страны" %}</h2>
+          <form method="post" class="mb-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_country">
+            {% for field in country_form %}
+              <div class="mb-2 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                  {{ field }}
+                  <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% else %}
+                  <label class="form-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {{ field }}
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-sm btn-primary">{% trans "Добавить страну" %}</button>
+          </form>
+          <ul class="list-group list-group-flush">
+            {% for c in countries %}
+              <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                <span>{{ c.name }} {% if c.code %}<small class="text-secondary">({{ c.code }})</small>{% endif %}</span>
+                <span class="badge {% if c.is_active %}badge-verified{% else %}badge-rejected{% endif %}">
+                  {% if c.is_active %}{% trans "Активна" %}{% else %}{% trans "Скрыта" %}{% endif %}
+                </span>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-secondary bg-transparent">{% trans "Справочник стран пуст." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-3">{% trans "Сферы деятельности" %}</h2>
+          <form method="post" class="mb-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_activity">
+            {% for field in activity_form %}
+              <div class="mb-2 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                  {{ field }}
+                  <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% else %}
+                  <label class="form-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {{ field }}
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-sm btn-primary">{% trans "Добавить сферу" %}</button>
+          </form>
+          <ul class="list-group list-group-flush">
+            {% for af in activity_fields %}
+              <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                <span>{{ af.name }}</span>
+                <span class="badge {% if af.is_active %}badge-verified{% else %}badge-rejected{% endif %}">
+                  {% if af.is_active %}{% trans "Активна" %}{% else %}{% trans "Скрыта" %}{% endif %}
+                </span>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-secondary bg-transparent">{% trans "Справочник сфер пуст." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

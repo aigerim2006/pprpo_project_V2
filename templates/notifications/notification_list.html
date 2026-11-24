@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Уведомления" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">{% trans "Уведомления" %}</h1>
+      <p class="text-secondary mb-0">{% trans "Оповещения о проверке документов, статусах и изменениях в системе" %}</p>
+    </div>
+    {% if unread_count %}
+      <form method="post" action="{% url 'notifications:mark_all_read' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-primary">{% trans "Отметить все прочитанными" %}</button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if notifications %}
+    <div class="list-group">
+      {% for item in notifications %}
+        <div class="list-group-item d-flex justify-content-between align-items-start gap-3 {% if not item.is_read %}fw-semibold{% endif %}">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <span>{{ item.title }}</span>
+              {% if not item.is_read %}
+                <span class="badge badge-pending">{% trans "Новое" %}</span>
+              {% endif %}
+            </div>
+            <p class="mb-1 text-secondary fw-normal">{{ item.message }}</p>
+            <small class="text-secondary fw-normal">{{ item.created_at|date:"d.m.Y H:i" }}</small>
+          </div>
+          <div class="d-flex gap-2 shrink-0">
+            {% if item.link %}
+              <a href="{{ item.link }}" class="btn btn-sm btn-outline-secondary">{% trans "Перейти" %}</a>
+            {% endif %}
+            {% if not item.is_read %}
+              <form method="post" action="{% url 'notifications:mark_read' item.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-primary">{% trans "Прочитано" %}</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5 text-secondary">
+        {% trans "Уведомлений пока нет." %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

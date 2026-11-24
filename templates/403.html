@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Доступ запрещён" %}{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="error-code">403</div>
+  <h1 class="h3 mb-3">{% trans "Доступ запрещён" %}</h1>
+  <p class="text-secondary mb-4">{% trans "У вас нет прав для просмотра этой страницы." %}</p>
+  <a class="btn btn-primary" href="{% url 'home' %}">{% trans "На главную" %}</a>
+</div>
+{% endblock %}

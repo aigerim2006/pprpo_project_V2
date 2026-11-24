@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ vacancy.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-body p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+          <h1 class="h3 mb-1">{{ vacancy.title }}</h1>
+          <p class="text-secondary mb-0">{{ vacancy.employer.company_name }} · {{ vacancy.country.name }} · {{ vacancy.activity_field.name }}</p>
+        </div>
+        <div>
+          {% if vacancy.is_active %}
+            <span class="badge badge-verified fs-6">{% trans "Открыта" %}</span>
+          {% else %}
+            <span class="badge badge-rejected fs-6">{% trans "Закрыта" %}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4 small">
+        <div class="col-sm-4"><strong>{% trans "Почасовая оплата:" %}</strong> {{ vacancy.salary_per_hour }}</div>
+        <div class="col-sm-4"><strong>{% trans "Минимальный язык:" %}</strong> {{ vacancy.min_language_level }}</div>
+        <div class="col-sm-4"><strong>{% trans "Свободных мест:" %}</strong> {{ vacancy.spots_count }}</div>
+        {% if vacancy.available_from or vacancy.available_to %}
+          <div class="col-sm-8">
+            <strong>{% trans "Период занятости:" %}</strong>
+            {{ vacancy.available_from|date:"d.m.Y"|default:"—" }} — {{ vacancy.available_to|date:"d.m.Y"|default:"—" }}
+          </div>
+        {% endif %}
+      </div>
+
+      <p class="mb-4">{{ vacancy.description|linebreaks }}</p>
+
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'vacancies:list' %}" class="btn btn-outline-secondary">{% trans "Назад к каталогу" %}</a>
+        {% if user.is_authenticated and user.is_student %}
+          {% if can_apply %}
+            <span class="badge badge-verified d-flex align-items-center px-3">{% trans "Профиль верифицирован — отклик доступен на этапе 60%" %}</span>
+          {% else %}
+            <div class="alert alert-warning mb-0 py-2 small">{{ block_reason }}</div>
+          {% endif %}
+        {% elif user.is_authenticated and user.is_employer and user.employer_profile == vacancy.employer %}
+          <a href="{% url 'vacancies:edit' vacancy.pk %}" class="btn btn-outline-primary">{% trans "Редактировать" %}</a>
+          <form method="post" action="{% url 'vacancies:toggle_active' vacancy.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+              {% if vacancy.is_active %}{% trans "Закрыть вакансию" %}{% else %}{% trans "Открыть вакансию" %}{% endif %}
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

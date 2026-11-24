@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Регистрация работодателя" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="h3 mb-1">{% trans "Регистрация компании-работодателя" %}</h1>
+          <p class="text-secondary mb-4">{% trans "После регистрации компания проходит верификацию координатором." %}</p>
+          <form method="post" novalidate data-validate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+            <h2 class="form-section">{% trans "Учётная запись" %}</h2>
+            <div class="row">
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.username %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.email %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.password1 %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.password2 %}</div>
+            </div>
+
+            <h2 class="form-section">{% trans "Данные компании" %}</h2>
+            <div class="row">
+              <div class="col-md-8">{% include "includes/form_field.html" with field=form.company_name %}</div>
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.country %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.contact_person %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.phone %}</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">{% trans "Зарегистрировать компанию" %}</button>
+            <a class="btn btn-link" href="{% url 'users:login' %}">{% trans "Уже есть учётная запись" %}</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Личный кабинет студента" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="h3 mb-4">{% trans "Личный кабинет студента" %}</h1>
+
+  {% if not profile %}
+    <div class="alert alert-warning">
+      {% trans "Профиль студента не заполнен." %}
+      <a href="{% url 'users:profile' %}" class="alert-link">{% trans "Заполнить профиль" %}</a>
+    </div>
+  {% else %}
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-secondary mb-3">{% trans "Статус верификации" %}</h2>
+          {% if profile.is_verified %}
+            <span class="badge badge-verified fs-6 mb-3">{% trans "Верифицирован" %}</span>
+            <p class="text-secondary mb-0">{% trans "Профиль проверен координатором." %}</p>
+          {% else %}
+            <span class="badge badge-pending fs-6 mb-3">{% trans "Ожидает верификации" %}</span>
+            <p class="text-secondary mb-0">{% trans "Подача откликов на вакансии станет доступна после того, как координатор верифицирует профиль и базовые документы." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 text-uppercase text-secondary mb-0">{% trans "Мой профиль" %}</h2>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'users:profile' %}">{% trans "Редактировать" %}</a>
+          </div>
+          <dl class="row mb-0 profile-list">
+            <dt class="col-sm-5">{% trans "ФИО" %}</dt><dd class="col-sm-7">{{ profile.get_full_name }}</dd>
+            <dt class="col-sm-5">{% trans "ВУЗ" %}</dt><dd class="col-sm-7">{{ profile.university }}</dd>
+            <dt class="col-sm-5">{% trans "Направление подготовки" %}</dt><dd class="col-sm-7">{{ profile.field_of_study }}</dd>
+            <dt class="col-sm-5">{% trans "Курс" %}</dt><dd class="col-sm-7">{{ profile.course }}</dd>
+            <dt class="col-sm-5">{% trans "Уровень языка" %}</dt><dd class="col-sm-7"><span class="badge badge-tag">{{ profile.language_level }}</span></dd>
+            <dt class="col-sm-5">{% trans "Доступен для работы" %}</dt><dd class="col-sm-7">{{ profile.available_from|date:"d.m.Y" }} — {{ profile.available_to|date:"d.m.Y" }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

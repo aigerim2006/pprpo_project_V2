@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Регистрация студента" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="h3 mb-1">{% trans "Регистрация студента" %}</h1>
+          <p class="text-secondary mb-4">{% trans "Заполните анкету один раз — данные будут использоваться при откликах на вакансии." %}</p>
+          <form method="post" novalidate data-validate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+            <h2 class="form-section">{% trans "Учётная запись" %}</h2>
+            <div class="row">
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.username %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.email %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.password1 %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.password2 %}</div>
+            </div>
+
+            <h2 class="form-section">{% trans "Личные данные" %}</h2>
+            <div class="row">
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.first_name %}</div>
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.last_name %}</div>
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.birth_date %}</div>
+            </div>
+
+            <h2 class="form-section">{% trans "Обучение и язык" %}</h2>
+            <div class="row">
+              <div class="col-md-8">{% include "includes/form_field.html" with field=form.university %}</div>
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.course %}</div>
+              <div class="col-md-8">{% include "includes/form_field.html" with field=form.field_of_study %}</div>
+              <div class="col-md-4">{% include "includes/form_field.html" with field=form.language_level %}</div>
+            </div>
+
+            <h2 class="form-section">{% trans "Период доступности (каникулы)" %}</h2>
+            <div class="row">
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.available_from %}</div>
+              <div class="col-md-6">{% include "includes/form_field.html" with field=form.available_to %}</div>
+            </div>
+
+            {% include "includes/form_field.html" with field=form.is_full_time %}
+
+            <button type="submit" class="btn btn-primary btn-lg">{% trans "Зарегистрироваться" %}</button>
+            <a class="btn btn-link" href="{% url 'users:login' %}">{% trans "Уже есть учётная запись" %}</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

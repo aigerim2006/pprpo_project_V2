@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Страница не найдена" %}{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="error-code">404</div>
+  <h1 class="h3 mb-3">{% trans "Страница не найдена" %}</h1>
+  <p class="text-secondary mb-4">{% trans "Запрошенная страница не существует или была перемещена." %}</p>
+  <a class="btn btn-primary" href="{% url 'home' %}">{% trans "На главную" %}</a>
+</div>
+{% endblock %}

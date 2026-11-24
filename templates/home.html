@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Главная" %}{% endblock %}
+{% block content %}
+
+<section class="hero py-5">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="badge badge-tag mb-3">{% trans "Work and Travel · Ferienjob · сезонная работа" %}</span>
+        <h1 class="display-5 fw-bold mb-3">{% trans "Зарубежное сезонное трудоустройство студентов — в одной системе" %}</h1>
+        <p class="lead text-secondary mb-4">{% trans "Профиль и документы, подбор вакансий, отклики, визовое сопровождение и оплата — без бумажной волокиты и потерянных сканов." %}</p>
+        <div class="d-flex flex-wrap gap-2">
+          {% if user.is_authenticated %}
+            <a class="btn btn-primary btn-lg" href="{% url 'users:dashboard' %}">{% trans "Перейти в личный кабинет" %}</a>
+          {% else %}
+            <a class="btn btn-primary btn-lg" href="{% url 'users:register_student' %}">{% trans "Я студент" %}</a>
+            <a class="btn btn-outline-primary btn-lg" href="{% url 'users:register_employer' %}">{% trans "Я работодатель" %}</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="card hero-card">
+          <div class="card-body p-4">
+            <h2 class="h6 text-uppercase text-secondary mb-3">{% trans "Что решает система" %}</h2>
+            <ul class="list-unstyled mb-0 hero-points">
+              <li>{% trans "Меньше ручной работы координаторов" %}</li>
+              <li>{% trans "Документы не теряются и не пропускают дедлайны" %}</li>
+              <li>{% trans "Прозрачный статус заявки для студента и работодателя" %}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <h2 class="h3 mb-4">{% trans "Как это работает" %}</h2>
+    <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-5">
+      <div class="col"><div class="card h-100 step-card"><div class="card-body">
+        <div class="step-num">1</div>
+        <h3 class="h6">{% trans "Централизованная регистрация" %}</h3>
+        <p class="small text-secondary mb-0">{% trans "Студент создаёт профиль, один раз заполняет анкету и загружает сканы документов." %}</p>
+      </div></div></div>
+      <div class="col"><div class="card h-100 step-card"><div class="card-body">
+        <div class="step-num">2</div>
+        <h3 class="h6">{% trans "Электронная верификация" %}</h3>
+        <p class="small text-secondary mb-0">{% trans "Координатор проверяет документы и присваивает профилю статус «Верифицирован»." %}</p>
+      </div></div></div>
+      <div class="col"><div class="card h-100 step-card"><div class="card-body">
+        <div class="step-num">3</div>
+        <h3 class="h6">{% trans "Подбор и отклик" %}</h3>
+        <p class="small text-secondary mb-0">{% trans "Поиск вакансий по фильтрам; отклик блокируется, если уровень языка ниже требуемого." %}</p>
+      </div></div></div>
+      <div class="col"><div class="card h-100 step-card"><div class="card-body">
+        <div class="step-num">4</div>
+        <h3 class="h6">{% trans "Работодатель и Job Offer" %}</h3>
+        <p class="small text-secondary mb-0">{% trans "Зарубежный партнёр изучает резюме, назначает собеседование и формирует Job Offer." %}</p>
+      </div></div></div>
+      <div class="col"><div class="card h-100 step-card"><div class="card-body">
+        <div class="step-num">5</div>
+        <h3 class="h6">{% trans "Визовый статус" %}</h3>
+        <p class="small text-secondary mb-0">{% trans "Студент отслеживает этапы оформления разрешения на работу в личном кабинете." %}</p>
+      </div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pb-4">
+  <div class="container">
+    <h2 class="h3 mb-4">{% trans "Для кого система" %}</h2>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+        <span class="badge badge-verified mb-2">{% trans "Студент" %}</span>
+        <p class="mb-0 text-secondary">{% trans "Обучающийся ВУЗа: поиск сезонной работы за рубежом, загрузка документов и отслеживание визового процесса." %}</p>
+      </div></div></div>
+      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+        <span class="badge badge-verified mb-2">{% trans "Работодатель" %}</span>
+        <p class="mb-0 text-secondary">{% trans "Представитель зарубежной компании или агентства-партнёра: публикует вакансии и проводит отбор кандидатов." %}</p>
+      </div></div></div>
+      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+        <span class="badge badge-verified mb-2">{% trans "Координатор" %}</span>
+        <p class="mb-0 text-secondary">{% trans "Сотрудник центра содействия трудоустройству: проверяет документы, ведёт визовые процессы, формирует отчёты." %}</p>
+      </div></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

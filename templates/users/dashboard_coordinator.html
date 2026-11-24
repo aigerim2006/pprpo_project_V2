@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Панель координатора" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="h3 mb-4">{% trans "Панель координатора" %}</h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body">
+      <div class="stat-value">{{ stats.users }}</div><div class="small text-secondary">{% trans "Пользователей" %}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body">
+      <div class="stat-value">{{ stats.students }}</div><div class="small text-secondary">{% trans "Студентов" %}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body">
+      <div class="stat-value">{{ stats.employers }}</div><div class="small text-secondary">{% trans "Работодателей" %}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card stat-alert"><div class="card-body">
+      <div class="stat-value">{{ stats.employers_pending }}</div><div class="small text-secondary">{% trans "Компаний ожидают верификации" %}</div>
+    </div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="h6 text-uppercase text-secondary mb-3">{% trans "Быстрые действия" %}</h2>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{% url 'users:coordinator_users' %}?role=EMPLOYER&verification=pending">{% trans "Верифицировать компании" %}</a>
+        <a class="btn btn-outline-primary" href="{% url 'users:coordinator_users' %}">{% trans "Управление учётными записями" %}</a>
+        <a class="btn btn-outline-secondary" href="{% url 'admin:index' %}">{% trans "Панель администрирования" %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

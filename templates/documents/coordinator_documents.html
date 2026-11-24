@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Проверка документов и верификация студентов" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-3">{% trans "Проверка документов и верификация студентов" %}</h1>
+
+  <div class="mb-4 d-flex flex-wrap gap-2">
+    <a href="{% url 'documents:coordinator_list' %}" class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">{% trans "Все" %}</a>
+    {% for code, label in status_choices %}
+      <a href="?status={{ code }}" class="btn btn-sm {% if status_filter == code %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header fw-semibold">{% trans "Загруженные документы студентов" %}</div>
+    <div class="card-body table-responsive">
+      {% if documents %}
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>{% trans "Студент" %}</th>
+              <th>{% trans "Тип" %}</th>
+              <th>{% trans "Файл" %}</th>
+              <th>{% trans "Статус" %}</th>
+              <th>{% trans "Решение координатора" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+              <tr>
+                <td>{{ doc.student.get_full_name }} <div class="small text-secondary">{{ doc.student.university }}</div></td>
+                <td>{{ doc.get_doc_type_display }}</td>
+                <td><a href="{% url 'documents:download' doc.pk %}" class="btn btn-sm btn-outline-secondary">{% trans "Скачать" %}</a></td>
+                <td>
+                  {% if doc.status == "VERIFIED" %}
+                    <span class="badge badge-verified">{{ doc.get_status_display }}</span>
+                  {% elif doc.status == "REJECTED" %}
+                    <span class="badge badge-rejected">{{ doc.get_status_display }}</span>
+                  {% else %}
+                    <span class="badge badge-pending">{{ doc.get_status_display }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <form method="post" action="{% url 'documents:review' doc.pk %}" class="d-flex flex-wrap gap-2 align-items-center">
+                    {% csrf_token %}
+                    <select name="decision" class="form-select form-select-sm w-auto">
+                      <option value="VERIFY" {% if doc.status == "VERIFIED" %}selected{% endif %}>{% trans "Верифицировать" %}</option>
+                      <option value="REJECT" {% if doc.status == "REJECTED" %}selected{% endif %}>{% trans "Отклонить" %}</option>
+                    </select>
+                    <input type="text" name="rejection_reason" value="{{ doc.rejection_reason }}" class="form-control form-control-sm w-auto" placeholder="{% trans 'Причина отклонения' %}">
+                    <button type="submit" class="btn btn-sm btn-primary">{% trans "Сохранить" %}</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-secondary mb-0">{% trans "Документы по выбранному фильтру не найдены." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">{% trans "Верификация профилей студентов" %}</div>
+    <div class="card-body table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{% trans "Студент" %}</th>
+            <th>{% trans "ВУЗ / Курс" %}</th>
+            <th>{% trans "Язык" %}</th>
+            <th>{% trans "Документов" %}</th>
+            <th>{% trans "Статус профиля" %}</th>
+            <th class="text-end">{% trans "Действие" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for st in students %}
+            <tr>
+              <td>{{ st.get_full_name }}</td>
+              <td>{{ st.university }}, {{ st.course }} {% trans "курс" %}</td>
+              <td>{{ st.language_level }}</td>
+              <td>{{ st.documents.count }}</td>
+              <td>
+                {% if st.is_verified %}
+                  <span class="badge badge-verified">{% trans "Верифицирован" %}</span>
+                {% else %}
+                  <span class="badge badge-pending">{% trans "Ожидает верификации" %}</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <form method="post" action="{% url 'documents:toggle_student_verify' st.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                    {% if st.is_verified %}{% trans "Снять верификацию" %}{% else %}{% trans "Верифицировать студента" %}{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

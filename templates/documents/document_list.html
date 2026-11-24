@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Мои документы" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">{% trans "Мои документы" %}</h1>
+      <p class="text-secondary mb-0">
+        {% trans "Статус профиля:" %}
+        {% if profile.is_verified %}
+          <span class="badge badge-verified">{% trans "Верифицирован" %}</span>
+        {% else %}
+          <span class="badge badge-pending">{% trans "Ожидает верификации" %}</span>
+        {% endif %}
+      </p>
+    </div>
+    <a href="{% url 'documents:upload' %}" class="btn btn-primary">{% trans "Загрузить документ" %}</a>
+  </div>
+
+  <div class="alert alert-info small">
+    {% trans "Допустимые форматы: PDF, JPG, PNG. Максимальный размер файла — 10 МБ. Для подачи откликов требуются верифицированные документы и подтверждение профиля координатором." %}
+  </div>
+
+  {% if documents %}
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>{% trans "Тип документа" %}</th>
+            <th>{% trans "Срок действия" %}</th>
+            <th>{% trans "Статус" %}</th>
+            <th>{% trans "Комментарий / Причина" %}</th>
+            <th class="text-end">{% trans "Действия" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in documents %}
+            <tr>
+              <td class="fw-semibold">{{ doc.get_doc_type_display }}</td>
+              <td>
+                {% if doc.expire_date %}
+                  {{ doc.expire_date|date:"d.m.Y" }}
+                  {% if doc.is_expired %}<span class="badge badge-rejected ms-1">{% trans "Просрочен" %}</span>{% endif %}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>
+                {% if doc.status == "VERIFIED" %}
+                  <span class="badge badge-verified">{{ doc.get_status_display }}</span>
+                {% elif doc.status == "REJECTED" %}
+                  <span class="badge badge-rejected">{{ doc.get_status_display }}</span>
+                {% else %}
+                  <span class="badge badge-pending">{{ doc.get_status_display }}</span>
+                {% endif %}
+              </td>
+              <td class="text-secondary small">{{ doc.rejection_reason|default:"—" }}</td>
+              <td class="text-end">
+                <a href="{% url 'documents:download' doc.pk %}" class="btn btn-sm btn-outline-secondary">{% trans "Скачать" %}</a>
+                <a href="{% url 'documents:edit' doc.pk %}" class="btn btn-sm btn-outline-primary">{% trans "Обновить" %}</a>
+                <form method="post" action="{% url 'documents:delete' doc.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger">{% trans "Удалить" %}</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5 text-secondary">
+        {% trans "Вы ещё не загрузили ни одного документа." %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Личный кабинет работодателя" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="h3 mb-4">{% trans "Личный кабинет работодателя" %}</h1>
+
+  {% if not profile %}
+    <div class="alert alert-warning">
+      {% trans "Профиль компании не заполнен." %}
+      <a href="{% url 'users:profile' %}" class="alert-link">{% trans "Заполнить профиль" %}</a>
+    </div>
+  {% else %}
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-secondary mb-3">{% trans "Верификация компании" %}</h2>
+          {% if profile.is_verified %}
+            <span class="badge badge-verified fs-6 mb-3">{% trans "Верифицирована" %}</span>
+            <p class="text-secondary mb-0">{% trans "Компания подтверждена координатором." %}</p>
+          {% else %}
+            <span class="badge badge-pending fs-6 mb-3">{% trans "Ожидает верификации" %}</span>
+            <p class="text-secondary mb-0">{% trans "Публикация вакансий станет доступна после верификации компании координатором." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 text-uppercase text-secondary mb-0">{% trans "Данные компании" %}</h2>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'users:profile' %}">{% trans "Редактировать" %}</a>
+          </div>
+          <dl class="row mb-0 profile-list">
+            <dt class="col-sm-5">{% trans "Название" %}</dt><dd class="col-sm-7">{{ profile.company_name }}</dd>
+            <dt class="col-sm-5">{% trans "Страна" %}</dt><dd class="col-sm-7">{{ profile.country }}</dd>
+            <dt class="col-sm-5">{% trans "Контактное лицо" %}</dt><dd class="col-sm-7">{{ profile.contact_person }}</dd>
+            <dt class="col-sm-5">{% trans "Телефон" %}</dt><dd class="col-sm-7">{{ profile.phone }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

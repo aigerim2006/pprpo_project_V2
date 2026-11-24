@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Вход" %}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="card">
+        <div class="card-body p-4">
+          <h1 class="h4 mb-4">{% trans "Вход в систему" %}</h1>
+          <form method="post" novalidate data-validate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+            {% include "includes/form_field.html" with field=form.username %}
+            {% include "includes/form_field.html" with field=form.password %}
+            <button type="submit" class="btn btn-primary w-100">{% trans "Войти" %}</button>
+          </form>
+          <hr>
+          <p class="small text-secondary mb-0">
+            {% trans "Нет учётной записи?" %}
+            <a href="{% url 'users:register_student' %}">{% trans "Я студент" %}</a> ·
+            <a href="{% url 'users:register_employer' %}">{% trans "Я работодатель" %}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

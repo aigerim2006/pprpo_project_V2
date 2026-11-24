@@ -1,0 +1,17 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# Секреты и локальные файлы
+.env
+
+# Загруженные пользователями документы и собранная статика
+media/
+staticfiles/
+
+# Дампы БД и IDE
+*.sqlite3
+*.dump
+.vscode/
+.idea/

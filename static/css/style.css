@@ -1,0 +1,225 @@
+/* АИС ЗСТС — тема оформления.
+   Светлая: «кремово-бежевая» палитра; тёмная: «графит / бетон».
+   Подключается после Bootstrap 5 и переопределяет его переменные. */
+
+:root,
+[data-bs-theme="light"] {
+  --bg-page: #F5EFE6;
+  --bg-surface: #EFE6D8;
+  --text-primary: #2B2118;
+  --text-secondary: #6E5D4F;
+  --accent-primary: #D95D24;
+  --accent-secondary: #2F6F4E;
+  --accent-danger: #8F2428;
+  --border-subtle: #DDD0BE;
+  --bg-input: #FBF8F3;
+
+  --bs-body-bg: var(--bg-page);
+  --bs-body-color: var(--text-primary);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-border-color: var(--border-subtle);
+  --bs-emphasis-color: var(--text-primary);
+  --bs-link-color: var(--accent-primary);
+  --bs-link-hover-color: var(--accent-danger);
+  --bs-primary: #D95D24;
+  --bs-primary-rgb: 217, 93, 36;
+  --bs-success: #2F6F4E;
+  --bs-success-rgb: 47, 111, 78;
+  --bs-danger: #8F2428;
+  --bs-danger-rgb: 143, 36, 40;
+}
+
+[data-bs-theme="dark"] {
+  --bg-page: #181512;
+  --bg-surface: #241F1B;
+  --text-primary: #F6F1EA;
+  --text-secondary: #B5A89B;
+  --accent-primary: #E06A2B;
+  --accent-secondary: #2F6F4E;
+  --accent-danger: #9E2A2B;
+  --border-subtle: #362F29;
+  --bg-input: #1E1A16;
+
+  --bs-body-bg: var(--bg-page);
+  --bs-body-color: var(--text-primary);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-border-color: var(--border-subtle);
+  --bs-emphasis-color: var(--text-primary);
+  --bs-link-color: var(--accent-primary);
+  --bs-link-hover-color: #F08A52;
+  --bs-primary: #E06A2B;
+  --bs-primary-rgb: 224, 106, 43;
+  --bs-success: #2F6F4E;
+  --bs-success-rgb: 47, 111, 78;
+  --bs-danger: #9E2A2B;
+  --bs-danger-rgb: 158, 42, 43;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+.text-secondary { color: var(--text-secondary) !important; }
+
+/* --- Навигация и подвал --- */
+.app-navbar {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.app-navbar .navbar-brand { font-weight: 700; color: var(--text-primary); }
+.app-navbar .nav-link { color: var(--text-secondary); }
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active { color: var(--accent-primary); }
+.navbar-toggler { border-color: var(--border-subtle); }
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; border-radius: .5rem;
+  background: var(--accent-primary); color: #fff; font-size: .8rem; font-weight: 700;
+}
+.app-footer { border-top: 1px solid var(--border-subtle); background-color: var(--bg-surface); }
+
+/* --- Кнопки --- */
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent-primary);
+  --bs-btn-border-color: var(--accent-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: color-mix(in srgb, var(--accent-primary) 86%, #000);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--accent-primary) 86%, #000);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: color-mix(in srgb, var(--accent-primary) 78%, #000);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--accent-primary) 78%, #000);
+  --bs-btn-disabled-bg: var(--accent-primary);
+  --bs-btn-disabled-border-color: var(--accent-primary);
+  font-weight: 600;
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--accent-primary);
+  --bs-btn-border-color: var(--accent-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--accent-primary);
+  --bs-btn-hover-border-color: var(--accent-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--accent-primary);
+  --bs-btn-active-border-color: var(--accent-primary);
+}
+.btn-outline-secondary {
+  --bs-btn-color: var(--text-secondary);
+  --bs-btn-border-color: var(--border-subtle);
+  --bs-btn-hover-color: var(--text-primary);
+  --bs-btn-hover-bg: var(--border-subtle);
+  --bs-btn-hover-border-color: var(--border-subtle);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--accent-danger);
+  --bs-btn-border-color: var(--accent-danger);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--accent-danger);
+  --bs-btn-hover-border-color: var(--accent-danger);
+}
+.btn-link { color: var(--accent-primary); }
+
+/* --- Карточки, таблицы, формы --- */
+.card {
+  --bs-card-bg: var(--bg-surface);
+  --bs-card-border-color: var(--border-subtle);
+  --bs-card-cap-bg: var(--bg-surface);
+  background-color: var(--bg-surface);
+  border-color: var(--border-subtle);
+  border-radius: .75rem;
+}
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-primary);
+  --bs-table-border-color: var(--border-subtle);
+  --bs-table-hover-bg: color-mix(in srgb, var(--border-subtle) 35%, transparent);
+}
+.table thead th {
+  color: var(--text-secondary); font-size: .8rem; text-transform: uppercase;
+  letter-spacing: .03em; font-weight: 600;
+}
+.form-control, .form-select {
+  background-color: var(--bg-input);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+.form-control:focus, .form-select:focus {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+.form-control::placeholder { color: var(--text-secondary); opacity: .7; }
+.form-control.is-invalid, .form-select.is-invalid { border-color: var(--accent-danger); background-image: none; }
+.form-check-input { background-color: var(--bg-input); border-color: var(--border-subtle); }
+.form-check-input:checked { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+.invalid-feedback { color: var(--accent-danger); }
+[data-bs-theme="dark"] .invalid-feedback { color: #E27B7C; }
+.form-text { color: var(--text-secondary); }
+.form-text ul { padding-left: 1.1rem; margin-bottom: 0; }
+.required-mark { color: var(--accent-danger); }
+.form-section {
+  font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--text-secondary); font-weight: 700;
+  border-bottom: 1px solid var(--border-subtle); padding-bottom: .4rem; margin: 1.5rem 0 1rem;
+}
+.form-section:first-of-type { margin-top: 0; }
+
+.dropdown-menu {
+  --bs-dropdown-bg: var(--bg-surface);
+  --bs-dropdown-border-color: var(--border-subtle);
+  --bs-dropdown-link-color: var(--text-primary);
+  --bs-dropdown-link-hover-bg: var(--border-subtle);
+  --bs-dropdown-link-hover-color: var(--text-primary);
+}
+.alert { border-radius: .6rem; }
+.alert-success { --bs-alert-color: #fff; --bs-alert-bg: var(--accent-secondary); --bs-alert-border-color: var(--accent-secondary); }
+.alert-success .btn-close { filter: invert(1); }
+.alert-danger { --bs-alert-color: #fff; --bs-alert-bg: var(--accent-danger); --bs-alert-border-color: var(--accent-danger); }
+.alert-danger .btn-close { filter: invert(1); }
+.alert-warning, .alert-info {
+  --bs-alert-color: var(--text-primary); --bs-alert-bg: var(--bg-surface);
+  --bs-alert-border-color: var(--accent-primary);
+}
+.pagination {
+  --bs-pagination-bg: var(--bg-surface); --bs-pagination-color: var(--text-primary);
+  --bs-pagination-border-color: var(--border-subtle);
+  --bs-pagination-hover-bg: var(--border-subtle); --bs-pagination-hover-color: var(--text-primary);
+  --bs-pagination-disabled-bg: var(--bg-surface); --bs-pagination-disabled-color: var(--text-secondary);
+}
+
+/* --- Бейджи: теги — вторичный акцент; статусы — акценты --- */
+.badge { font-weight: 600; }
+.badge-tag { background-color: var(--border-subtle); color: var(--text-primary); }
+.badge-verified { background-color: var(--accent-secondary); color: #fff; }
+.badge-pending { background-color: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); }
+.badge-danger { background-color: var(--accent-danger); color: #fff; }
+
+/* --- Главная --- */
+.hero { border-bottom: 1px solid var(--border-subtle); }
+.hero-card { box-shadow: 0 .5rem 1.5rem color-mix(in srgb, var(--text-primary) 8%, transparent); }
+.hero-points li { padding-left: 1.4rem; position: relative; margin-bottom: .6rem; }
+.hero-points li::before {
+  content: ""; position: absolute; left: 0; top: .5em;
+  width: .6rem; height: .6rem; border-radius: 50%; background: var(--accent-secondary);
+}
+.step-num {
+  width: 2rem; height: 2rem; border-radius: 50%; margin-bottom: .75rem;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-primary); color: #fff; font-weight: 700;
+}
+
+/* --- Кабинеты --- */
+.profile-list dt { color: var(--text-secondary); font-weight: 500; }
+.profile-list dd { margin-bottom: .6rem; }
+.stat-value { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.stat-alert .stat-value { color: var(--accent-primary); }
+
+/* --- Страницы ошибок --- */
+.error-code { font-size: 5rem; font-weight: 800; color: var(--accent-primary); line-height: 1; margin-bottom: 1rem; }
+
+/* --- Адаптивность --- */
+@media (max-width: 575.98px) {
+  .display-5 { font-size: 1.9rem; }
+  .card-body.p-md-5 { padding: 1.25rem !important; }
+}
