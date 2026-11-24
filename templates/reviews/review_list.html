@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Отзывы и рейтинг работодателей (FR-1.8)" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="h3 mb-1">{% trans "Отзывы о работодателях и программах" %}</h1>
+      <p class="text-secondary mb-0">{% trans "Публикуются студентами после успешного завершения контракта" %}</p>
+    </div>
+    <form method="get" class="d-flex gap-2">
+      <select name="employer" class="form-select form-select-sm">
+        <option value="">{% trans "Все работодатели" %}</option>
+        {% for emp in employers %}
+          <option value="{{ emp.pk }}" {% if selected_employer and selected_employer.pk == emp.pk %}selected{% endif %}>
+            {{ emp.company_name }} (★ {{ emp.computed_rating }})
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-sm btn-outline-primary">{% trans "Показать" %}</button>
+    </form>
+  </div>
+
+  {% if completed_apps %}
+    <div class="alert alert-info">
+      <div class="fw-semibold mb-2">{% trans "Вы завершили сезонную работу — доступен отзыв по контракту:" %}</div>
+      <div class="d-flex flex-wrap gap-2">
+        {% for app in completed_apps %}
+          <a href="{% url 'reviews:create' app.pk %}" class="btn btn-sm btn-primary">
+            {% trans "Оставить отзыв:" %} {{ app.vacancy.employer.company_name }} ({{ app.vacancy.title }})
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if reviews %}
+    <div class="row g-3">
+      {% for rev in reviews %}
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h2 class="h5 mb-0">{{ rev.employer.company_name }}</h2>
+                  <div class="small text-secondary">{{ rev.application.vacancy.title }} · {{ rev.student.get_full_name }}</div>
+                </div>
+                <span class="badge badge-verified fs-6">★ {{ rev.rating }} / 5</span>
+              </div>
+              <p class="mb-2">{{ rev.comment|linebreaks }}</p>
+              <div class="small text-secondary">{{ rev.created_at|date:"d.m.Y" }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5 text-secondary">
+        {% trans "Отзывов пока нет." %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

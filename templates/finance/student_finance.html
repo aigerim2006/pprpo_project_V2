@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Финансы и оплата услуг (FR-1.9)" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-1">{% trans "Финансы и оплата услуг" %}</h1>
+  <p class="text-secondary mb-4">{% trans "Контроль счетов, остатка задолженности и скачивание электронных квитанций" %}</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Всего начислено" %}</div>
+        <div class="h4 mb-0">{{ total_billed }} EUR</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Оплачено" %}</div>
+        <div class="h4 mb-0 text-success">{{ total_paid }} EUR</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Текущая задолженность" %}</div>
+        <div class="h4 mb-0 text-danger">{{ total_debt }} EUR</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header fw-semibold">{% trans "Выставленные счета" %}</div>
+    <div class="card-body p-0">
+      {% if invoices %}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Счёт" %}</th>
+                <th>{% trans "Назначение" %}</th>
+                <th>{% trans "Сумма" %}</th>
+                <th>{% trans "Оплачено" %}</th>
+                <th>{% trans "Остаток" %}</th>
+                <th>{% trans "Статус" %}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inv in invoices %}
+                <tr>
+                  <td class="fw-semibold">{{ inv.number }}</td>
+                  <td>
+                    <div>{{ inv.get_service_type_display }}</div>
+                    <div class="small text-secondary">{{ inv.description }}</div>
+                  </td>
+                  <td>{{ inv.amount_total }} EUR</td>
+                  <td>{{ inv.amount_paid }} EUR</td>
+                  <td class="fw-semibold">{{ inv.balance_due }} EUR</td>
+                  <td>
+                    <span class="badge {% if inv.status == 'PAID' %}badge-verified{% elif inv.status == 'CANCELLED' %}badge-rejected{% else %}badge-pending{% endif %}">
+                      {{ inv.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    {% if inv.balance_due > 0 and inv.status != 'CANCELLED' %}
+                      <a href="{% url 'finance:checkout' inv.pk %}" class="btn btn-sm btn-primary">{% trans "Оплатить" %}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="p-4 text-center text-secondary">{% trans "Выставленных счетов пока нет." %}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">{% trans "История транзакций и электронные квитанции (UC-19)" %}</div>
+    <div class="card-body p-0">
+      {% if payments %}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Транзакция" %}</th>
+                <th>{% trans "Счёт" %}</th>
+                <th>{% trans "Сумма" %}</th>
+                <th>{% trans "Карта" %}</th>
+                <th>{% trans "Статус" %}</th>
+                <th>{% trans "Дата" %}</th>
+                <th>{% trans "Квитанция" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in payments %}
+                <tr>
+                  <td>{{ p.transaction_id }}</td>
+                  <td>{{ p.invoice.number }}</td>
+                  <td>{{ p.amount }} EUR</td>
+                  <td>**** {{ p.card_last4|default:"0000" }}</td>
+                  <td>
+                    <span class="badge {% if p.status == 'SUCCEEDED' %}badge-verified{% elif p.status == 'FAILED' %}badge-rejected{% else %}badge-pending{% endif %}">
+                      {{ p.get_status_display }}
+                    </span>
+                    {% if p.failure_reason %}<div class="small text-danger">{{ p.failure_reason }}</div>{% endif %}
+                  </td>
+                  <td>{{ p.created_at|date:"d.m.Y H:i" }}</td>
+                  <td>
+                    {% if p.status == 'SUCCEEDED' %}
+                      <a href="{% url 'finance:receipt' p.pk %}" class="btn btn-sm btn-outline-primary">{% trans "Скачать PDF" %}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="p-4 text-center text-secondary">{% trans "Платежей пока не совершалось." %}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

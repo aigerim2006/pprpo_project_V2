@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if is_edit %}{% trans "Редактировать новость" %}{% else %}{% trans "Добавить публикацию" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header fw-semibold">
+          {% if is_edit %}{% trans "Редактирование новости" %}{% else %}{% trans "Новая публикация (UC-18)" %}{% endif %}
+        </div>
+        <div class="card-body p-4">
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check">
+                    {{ field }}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                {% else %}
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {{ field }}
+                {% endif %}
+                {% for err in field.errors %}
+                  <div class="text-danger small mt-1">{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'news:list' %}" class="btn btn-outline-secondary">{% trans "Отмена" %}</a>
+              <button type="submit" class="btn btn-primary">{% trans "Опубликовать" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

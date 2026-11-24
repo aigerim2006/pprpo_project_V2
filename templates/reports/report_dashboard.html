@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Сводные отчёты (FR-3.4)" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="h3 mb-1">{% trans "Сводные отчёты и списки трудоустроенных студентов" %}</h1>
+      <p class="text-secondary mb-0">{% trans "Экспорт в Excel (.xlsx) и PDF с кэшированием результатов" %}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'reports:export_excel' %}?country={{ request.GET.country }}&status={{ request.GET.status }}" class="btn btn-outline-primary">
+        {% trans "Экспорт Excel (.xlsx)" %}
+      </a>
+      <a href="{% url 'reports:export_pdf' %}?country={{ request.GET.country }}&status={{ request.GET.status }}" class="btn btn-primary">
+        {% trans "Экспорт PDF (.pdf)" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Всего заявок" %}</div>
+        <div class="h4 mb-0">{{ metrics.total }}</div>
+      </div></div>
+    </div>
+    <div class="col-md-3">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Одобрено / Завершено" %}</div>
+        <div class="h4 mb-0 text-success">{{ metrics.approved }}</div>
+      </div></div>
+    </div>
+    <div class="col-md-3">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Виза получена (100%)" %}</div>
+        <div class="h4 mb-0">{{ metrics.visas_issued }}</div>
+      </div></div>
+    </div>
+    <div class="col-md-3">
+      <div class="card"><div class="card-body">
+        <div class="small text-secondary">{% trans "Выставлено счетов" %}</div>
+        <div class="h4 mb-0">{{ metrics.invoices_count }}</div>
+      </div></div>
+    </div>
+  </div>
+
+  <form method="get" class="card mb-4">
+    <div class="card-body d-flex flex-wrap gap-3 align-items-end">
+      <div>
+        <label class="form-label small">{{ form.country.label }}</label>
+        {{ form.country }}
+      </div>
+      <div>
+        <label class="form-label small">{{ form.status.label }}</label>
+        {{ form.status }}
+      </div>
+      <div>
+        <button type="submit" class="btn btn-sm btn-primary">{% trans "Сформировать" %}</button>
+        <a href="{% url 'reports:dashboard' %}" class="btn btn-sm btn-outline-secondary">{% trans "Сбросить" %}</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0 small">
+          <thead>
+            <tr>
+              <th>{% trans "Студент" %}</th>
+              <th>{% trans "ВУЗ / Язык" %}</th>
+              <th>{% trans "Страна" %}</th>
+              <th>{% trans "Работодатель / Вакансия" %}</th>
+              <th>{% trans "Статус" %}</th>
+              <th>{% trans "Виза" %}</th>
+              <th>{% trans "Дата" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td class="fw-semibold">{{ r.student_name }}</td>
+                <td>{{ r.university }} ({{ r.language_level }})</td>
+                <td>{{ r.country }}</td>
+                <td>{{ r.employer }} — {{ r.vacancy }}</td>
+                <td>{{ r.status }}</td>
+                <td>{{ r.visa_stage }} ({{ r.visa_progress }}%)</td>
+                <td>{{ r.applied_at }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7" class="text-center py-4 text-secondary">{% trans "Записей по выбранным фильтрам нет." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

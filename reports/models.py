@@ -1,0 +1,1 @@
+"""Модули отчётности агрегируют данные из applications, users, vacancies и finance (рис. 11)."""

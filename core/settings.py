@@ -35,6 +35,10 @@ INSTALLED_APPS = [
     "documents",
     "vacancies",
     "applications",
+    "finance",
+    "reviews",
+    "news",
+    "reports",
 ]
 
 MIDDLEWARE = [
@@ -96,11 +100,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # --- Интернационализация (ru / en / de) ----------------------------------
+
 LANGUAGE_CODE = "ru"
 LANGUAGES = [("ru", "Русский"), ("en", "English"), ("de", "Deutsch")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Asia/Bishkek"
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
 # --- Статика и медиа -----------------------------------------------------
@@ -135,3 +141,18 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@ais-zsts.local")
+
+# Кэширование (п. 2.2.4 ТЗ)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "ais-zsts-default-cache",
+        "TIMEOUT": 300,
+    }
+}
+
+
+# Безопасность и HTTPS (п. 2.2.3 и п. 5.3.4 ТЗ)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = os.environ.get("DJANGO_SESSION_COOKIE_SECURE", "False").lower() == "true"
+CSRF_COOKIE_SECURE = os.environ.get("DJANGO_CSRF_COOKIE_SECURE", "False").lower() == "true"

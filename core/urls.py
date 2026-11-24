@@ -14,6 +14,10 @@ urlpatterns = [
     path("documents/", include("documents.urls")),
     path("vacancies/", include("vacancies.urls")),
     path("applications/", include("applications.urls")),
+    path("finance/", include("finance.urls")),
+    path("reviews/", include("reviews.urls")),
+    path("news/", include("news.urls")),
+    path("reports/", include("reports.urls")),
 ]
 
 if settings.DEBUG:
