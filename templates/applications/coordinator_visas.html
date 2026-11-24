@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Визовое сопровождение (FR-3.3)" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-4">{% trans "Контроль этапов визового оформления" %}</h1>
+
+  {% if rows %}
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>{% trans "Студент" %}</th>
+            <th>{% trans "Вакансия / Страна" %}</th>
+            <th>{% trans "Job Offer" %}</th>
+            <th>{% trans "Прогресс" %}</th>
+            <th>{% trans "Обновление этапа" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            {% with app=row.application visa=row.visa form=row.form %}
+              <tr>
+                <td>
+                  <a href="{% url 'applications:detail' app.pk %}" class="fw-semibold text-decoration-none">{{ app.student.get_full_name }}</a>
+                  <div class="small text-secondary">{{ app.student.university }}</div>
+                </td>
+                <td>{{ app.vacancy.title }} <div class="small text-secondary">{{ app.vacancy.country.name }}</div></td>
+                <td>{{ app.get_offer_status_display }}</td>
+                <td style="min-width: 150px;">
+                  <div class="small mb-1">{{ visa.get_stage_display }} ({{ visa.progress_percent }}%)</div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" role="progressbar" style="width: {{ visa.progress_percent }}%;"></div>
+                  </div>
+                </td>
+                <td>
+                  <form method="post" action="{% url 'applications:update_visa' app.pk %}" enctype="multipart/form-data" class="d-flex flex-wrap gap-2 align-items-center">
+                    {% csrf_token %}
+                    {{ form.stage }}
+                    {{ form.authority_note }}
+                    {{ form.work_permit_file }}
+                    <button type="submit" class="btn btn-sm btn-primary">{% trans "Сохранить" %}</button>
+                  </form>
+                </td>
+              </tr>
+            {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5 text-secondary">
+        {% trans "Заявок для визового сопровождения пока нет." %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

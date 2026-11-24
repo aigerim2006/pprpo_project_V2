@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Заявка" %} #{{ application.pk }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="h3 mb-1">{{ application.vacancy.title }}</h1>
+      <p class="text-secondary mb-0">
+        {% trans "Студент:" %} <strong>{{ application.student.get_full_name }}</strong> ·
+        {% trans "Компания:" %} <strong>{{ application.vacancy.employer.company_name }}</strong>
+      </p>
+    </div>
+    <span class="badge {% if application.status == 'APPROVED' or application.status == 'COMPLETED' %}badge-verified{% elif application.status == 'REJECTED' or application.status == 'WITHDRAWN' %}badge-rejected{% else %}badge-pending{% endif %} fs-6">
+      {{ application.get_status_display }}
+    </span>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card mb-4">
+        <div class="card-header fw-semibold">{% trans "Этапы оформления и визовый Progress Bar (FR-1.7, FR-3.3)" %}</div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between small mb-1">
+            <span><strong>{{ visa_stage.get_stage_display }}</strong></span>
+            <span>{{ visa_stage.progress_percent }}%</span>
+          </div>
+          <div class="progress mb-3" style="height: 12px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ visa_stage.progress_percent }}%;"
+                 aria-valuenow="{{ visa_stage.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          {% if visa_stage.authority_note %}
+            <p class="small mb-2"><strong>{% trans "Примечание координатора:" %}</strong> {{ visa_stage.authority_note }}</p>
+          {% endif %}
+          {% if visa_stage.work_permit_file %}
+            <a href="{% url 'applications:permit_file' visa_stage.pk %}" class="btn btn-sm btn-outline-primary">{% trans "Скачать разрешение на работу" %}</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header fw-semibold">{% trans "Собеседование и Job Offer (FR-1.6, FR-2.4, FR-2.5)" %}</div>
+        <div class="card-body">
+          {% if application.interview_date %}
+            <p class="mb-2">
+              <strong>{% trans "Собеседование назначено:" %}</strong> {{ application.interview_date|date:"d.m.Y H:i" }}
+              {% if application.interview_link_or_notes %}<br><span class="text-secondary small">{{ application.interview_link_or_notes }}</span>{% endif %}
+            </p>
+          {% else %}
+            <p class="text-secondary small mb-2">{% trans "Собеседование пока не назначено." %}</p>
+          {% endif %}
+
+          <hr>
+          <p class="mb-1"><strong>{% trans "Статус Job Offer:" %}</strong> {{ application.get_offer_status_display }}</p>
+          {% if application.job_offer_terms %}
+            <div class="p-3 rounded border mb-3 small">{{ application.job_offer_terms|linebreaks }}</div>
+          {% endif %}
+          {% if application.job_offer_file %}
+            <div class="mb-3">
+              <a href="{% url 'applications:offer_file' application.pk %}" class="btn btn-sm btn-outline-secondary">{% trans "Скачать файл Job Offer" %}</a>
+            </div>
+          {% endif %}
+
+          {% if is_owner_student and application.offer_status == "SENT" %}
+            <div class="d-flex gap-2">
+              <form method="post" action="{% url 'applications:offer_response' application.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="ACCEPT">
+                <button type="submit" class="btn btn-sm btn-primary">{% trans "Подтвердить Job Offer" %}</button>
+              </form>
+              <form method="post" action="{% url 'applications:offer_response' application.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="DECLINE">
+                <button type="submit" class="btn btn-sm btn-outline-danger">{% trans "Отклонить Job Offer" %}</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if is_owner_student and application.can_withdraw %}
+        <form method="post" action="{% url 'applications:withdraw' application.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-secondary">{% trans "Отозвать заявку" %}</button>
+        </form>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-5">
+      {% if is_owner_employer %}
+        <div class="card mb-4">
+          <div class="card-header fw-semibold">{% trans "Решение работодателя по кандидату" %}</div>
+          <div class="card-body">
+            <p class="small text-secondary mb-2">
+              {% trans "ВУЗ:" %} {{ application.student.university }}, {{ application.student.course }} {% trans "курс" %}<br>
+              {% trans "Уровень языка:" %} <strong>{{ application.student.language_level }}</strong><br>
+              {% trans "Период доступности:" %} {{ application.student.available_from|date:"d.m.Y" }} — {{ application.student.available_to|date:"d.m.Y" }}
+            </p>
+            {% if application.cover_letter %}
+              <p class="small"><strong>{% trans "Комментарий студента:" %}</strong> {{ application.cover_letter }}</p>
+            {% endif %}
+
+            {% if student_docs %}
+              <div class="mb-3">
+                <div class="small fw-semibold mb-1">{% trans "Документы кандидата:" %}</div>
+                <ul class="list-group list-group-flush small">
+                  {% for doc in student_docs %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                      <span>{{ doc.get_doc_type_display }} ({{ doc.get_status_display }})</span>
+                      <a href="{% url 'documents:download' doc.pk %}">{% trans "Скачать" %}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'applications:decide' application.pk %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% for field in decision_form %}
+                <div class="mb-3">
+                  <label class="form-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {{ field }}
+                </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-primary w-100">{% trans "Применить решение" %}</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

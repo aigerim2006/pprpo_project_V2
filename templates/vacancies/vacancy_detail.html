@@ -38,10 +38,42 @@
       <div class="d-flex flex-wrap gap-2">
         <a href="{% url 'vacancies:list' %}" class="btn btn-outline-secondary">{% trans "Назад к каталогу" %}</a>
         {% if user.is_authenticated and user.is_student %}
-          {% if can_apply %}
-            <span class="badge badge-verified d-flex align-items-center px-3">{% trans "Профиль верифицирован — отклик доступен на этапе 60%" %}</span>
+          {% if can_apply and vacancy.is_active %}
+            <form method="post" action="{% url 'applications:apply' vacancy.pk %}" class="w-100 mt-3">
+              {% csrf_token %}
+              <div class="mb-2">
+                <label class="form-label small" for="id_cover_letter">{% trans "Сопроводительный комментарий (необязательно)" %}</label>
+                <textarea id="id_cover_letter" name="cover_letter" rows="2" class="form-control form-control-sm"></textarea>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" name="accept_terms" id="id_accept_terms" required>
+                <label class="form-check-label small" for="id_accept_terms">
+                  {% trans "Подтверждаю ознакомление с условиями вакансии" %}
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary">{% trans "Откликнуться" %}</button>
+            </form>
+          {% elif not vacancy.is_active %}
+            <div class="alert alert-secondary mb-0 py-2 small">{% trans "Набор по этой вакансии закрыт." %}</div>
           {% else %}
             <div class="alert alert-warning mb-0 py-2 small">{{ block_reason }}</div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#eligibilityModal">
+              {% trans "Причина блокировки отклика" %}
+            </button>
+            <div class="modal fade" id="eligibilityModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">{% trans "Отклик недоступен" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Закрыть' %}"></button>
+                  </div>
+                  <div class="modal-body">{{ block_reason }}</div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Понятно" %}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           {% endif %}
         {% elif user.is_authenticated and user.is_employer and user.employer_profile == vacancy.employer %}
           <a href="{% url 'vacancies:edit' vacancy.pk %}" class="btn btn-outline-primary">{% trans "Редактировать" %}</a>
